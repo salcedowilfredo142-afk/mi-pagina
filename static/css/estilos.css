@@ -1,244 +1,272 @@
 /* ==========================================================================
-   ESTILOS GENERALES Y MAQUETACIÓN
+   🎨 ESTILOS GENERALES Y VARIABLES
    ========================================================================== */
+:root {
+    --bg-dark: #121824;
+    --sidebar-bg: #1a2232;
+    --text-light: #ffffff;
+    --text-muted: #94a3b8;
+    --accent-blue: #4fc3f7;
+    --accent-orange: #ff5722;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+}
+
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    display: flex;
-    height: 100vh;
-    background-color: #f4f6f9;
+    background-color: #f1f5f9;
+    color: #334155;
+    overflow-x: hidden;
 }
 
 /* ==========================================================================
-   COLUMNA IZQUIERDA: Niveles e Instrucciones
+   ⏳ ESTILOS DE LA PANTALLA DE CARGA (SPLASH SCREEN)
    ========================================================================== */
-.columna-izquierda {
-    width: 30%;
-    background-color: #1e1e2f;
-    color: white;
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-dark);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+}
+
+.splash-content {
+    text-align: center;
+    color: var(--text-light);
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.1);
+    border-top: 5px solid var(--accent-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px auto;
+}
+
+@keyframes spin {
+    0 { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   📐 ESTRUCTURA RESPONSIVA (COMPUTADORA)
+   ========================================================================== */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+}
+
+/* Barra lateral */
+.sidebar {
+    width: 320px;
+    background-color: var(--sidebar-bg);
+    color: var(--text-light);
     padding: 25px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 25px;
+    flex-shrink: 0;
 }
 
-.instrucciones h2 {
+.sidebar-header h2 {
+    font-size: 1.4rem;
+    color: var(--accent-blue);
     margin-bottom: 15px;
-    color: #4fc3f7;
 }
 
-.instrucciones p {
-    font-size: 14px;
-    line-height: 1.6;
-    margin-bottom: 20px;
+.academic-levels {
+    display: flex;
+    gap: 8px;
 }
 
-.btn-nivel {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
+.btn-level {
+    flex: 1;
+    background-color: #2d3748;
+    color: var(--text-light);
     border: none;
-    border-radius: 5px;
-    background-color: #3a3f58;
-    color: white;
+    padding: 10px 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: background 0.3s;
+}
+
+.btn-level:hover {
+    background-color: var(--accent-blue);
+}
+
+.btn-new-chat {
+    background-color: var(--accent-blue);
+    color: #0f172a;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.3s;
+    font-size: 1rem;
 }
 
-.btn-nivel.activo {
-    background-color: #4fc3f7;
-    color: #1e1e2f;
-    box-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+.sidebar-menu {
+    flex-grow: 1;
 }
 
-.btn-nivel:hover {
-    background-color: #4fc3f7;
-    color: #1e1e2f;
-}
-
-.btn-contacto {
-    background-color: #ff5722;
-    color: white;
-    padding: 12px;
-    text-align: center;
-    border-radius: 5px;
-    text-decoration: none;
+.menu-title {
+    font-size: 0.8rem;
+    color: var(--accent-blue);
     font-weight: bold;
-    margin-top: 20px;
-    transition: 0.3s;
+    letter-spacing: 1px;
 }
 
-.btn-contacto:hover {
-    background-color: #25d366;
+.btn-custom-code {
+    background-color: var(--accent-orange);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: auto;
 }
 
-/* ==========================================================================
-   COLUMNA DERECHA: Login y Chat interactivo
-   ========================================================================== */
-.columna-derecha {
-    width: 70%;
-    padding: 40px;
+/* Área Central */
+.main-content {
+    flex-grow: 1;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    padding: 40px;
 }
 
-/* Caja de login */
-.caja-bienvenida {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+/* Tarjeta de Login */
+.login-card {
+    background-color: var(--card-bg);
+    width: 100%;
+    max-width: 450px;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     text-align: center;
-    max-width: 500px;
-    width: 100%;
 }
 
-.contenedor-perfil {
-    margin-bottom: 20px;
+.login-header h1 {
+    font-size: 1.8rem;
+    margin-top: 10px;
+    color: #1e293b;
 }
 
-#foto-vista-previa {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #4fc3f7;
-    margin-bottom: 10px;
+.login-header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 5px;
 }
 
-.btn-subir-foto {
-    display: inline-block;
-    font-size: 13px;
-    color: #4fc3f7;
-    background: #1e1e2f;
-    padding: 6px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.campo-texto {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.btn-entrar {
-    width: 100%;
-    background-color: #4fc3f7;
-    color: #1e1e2f;
-    border: none;
-    padding: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 15px;
-}
-
-/* Interfaz del chat */
-.contenedor-chat {
-    width: 100%;
-    max-width: 700px;
-    height: 85vh;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+.profile-avatar-section {
+    margin: 25px 0;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-}
-
-.cabecera-chat {
-    background: #1e1e2f;
-    color: white;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.info-asistente {
-    display: flex;
     align-items: center;
     gap: 10px;
 }
 
-#foto-chat-perfil {
-    width: 35px;
-    height: 35px;
+.avatar-placeholder img {
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #4fc3f7;
+    border: 3px solid var(--border-color);
 }
 
-.cuerpo-chat {
-    flex: 1;
-    padding: 20px;
-    background: #f8f9fa;
-    overflow-y: auto;
+.btn-change-photo {
+    background-color: #1e293b;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.login-form {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.mensaje {
-    padding: 12px 16px;
+.form-group input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    max-width: 80%;
-    font-size: 14px;
-    line-height: 1.5;
-    white-space: pre-line;
-}
-
-.mensaje.asistente {
-    background: #e3f2fd;
-    color: #0d47a1;
-    align-self: flex-start;
-}
-
-.mensaje.usuario {
-    background: #4fc3f7;
-    color: #1e1e2f;
-    align-self: flex-end;
-    font-weight: 500;
-}
-
-.pie-chat {
-    display: flex;
-    padding: 15px;
-    background: white;
-    border-top: 1px solid #eee;
-    gap: 10px;
-}
-
-#entrada-usuario {
-    flex: 1;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    font-size: 1rem;
     outline: none;
+    transition: border-color 0.3s;
 }
 
-#btn-enviar-chat {
-    background: #1e1e2f;
-    color: white;
+.form-group input:focus {
+    border-color: var(--accent-blue);
+}
+
+.btn-submit {
+    background-color: var(--accent-blue);
+    color: #0f172a;
     border: none;
-    padding: 0 20px;
-    border-radius: 5px;
-    cursor: pointer;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 1rem;
     font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-submit:hover {
+    background-color: #33b5e5;
+}
+
+/* ==========================================================================
+   📱 MEDIA QUERIES (REGLAS EXCLUSIVAS PARA TELÉFONOS Y TABLETS)
+   ========================================================================== */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column; /* Coloca la barra lateral arriba y el login abajo */
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .sidebar-menu {
+        display: none; /* Oculta la lista de chats viejos en móvil para ahorrar espacio */
+    }
+
+    .btn-custom-code {
+        margin-top: 10px;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    .login-card {
+        padding: 25px 20px;
+    }
 }
