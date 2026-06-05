@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Código IA - Profesional</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <style>
+        /* Panel de control de historial */
+        .seccion-historial {
+            margin-top: 20px;
+            border-top: 1px solid #3a3f58;
+            padding-top: 15px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .titulo-historial {
+            font-size: 13px;
+            color: #4fc3f7;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+        .item-chat {
+            background: #25283d;
+            padding: 8px 10px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            transition: 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .item-chat:hover {
+            background: #2f334d;
+        }
+        .item-chat.fijado {
+            border-left: 3px solid #ffb74d;
+            background: #2e263d;
+        }
+        .btn-fijar {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .item-chat.fijado .btn-fijar {
+            color: #ffb74d;
+        }
+        .bloque-codigo {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: left;
+            white-space: pre;
+            overflow-x: auto;
+            margin-top: 10px;
+            border-left: 4px solid #4fc3f7;
+        }
+        .btn-copiar {
+            display: block;
+            margin-top: 10px;
+            background: #25283d;
+            color: #4fc3f7;
+            border: 1px solid #4fc3f7;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            width: fit-content;
+        }
+        .btn-nuevo-chat {
+            background: #4fc3f7;
+            color: #1e1e2f;
+            border: none;
+            padding: 8px;
+            width: 100%;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: 0.2s;
+        }
+        .btn-nuevo-chat:hover {
+            background: #3cb0e6;
+        }
+        /* Estilos recuperados y mejorados para la foto de perfil circular */
+        .contenedor-perfil {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        #foto-vista-previa, #foto-chat-perfil {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #4fc3f7;
+        }
+        #foto-chat-perfil {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+        .btn-subir-foto {
+            display: inline-block;
+            background: #25283d;
+            color: #4fc3f7;
+            padding: 5px 10px;
+            font-size: 11px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+            border: 1px solid #4fc3f7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="columna-izquierda">
+        <div class="instrucciones">
+            <h2>Nivel Académico</h2>
+            <div style="display:flex; gap:5px; margin-bottom:15px;">
+                <button class="btn-nivel">Veterano</button>
+                <button class="btn-nivel">TSU</button>
+                <button class="btn-nivel">Ingeniero</button>
+            </div>
+            
+            <button class="btn-nuevo-chat" id="btn-nuevo-chat">➕ Iniciar Nuevo Chat</button>
+
+            <div class="seccion-historial">
+                <div class="titulo-historial">📌 Conversaciones Fijas y Recientes</div>
+                <div id="lista-historial"></div>
+            </div>
+        </div>
+        
+        <a href="https://wa.me/584120000000" target="_blank" class="btn-contacto" id="enlace-contacto">
+           💬 Solicitar Código Personalizado
+        </a>
+    </div>
+
+    <div class="columna-derecha">
+        <div class="caja-bienvenida" id="seccion-login">
+            <h2>🔑 Iniciar Sesión</h2>
+            <p style="color: #888; margin-bottom: 15px; font-size: 13px;">Gestiona tu perfil y accede al motor IA</p>
+            
+            <form id="form-usuario">
+                <div class="contenedor-perfil">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" id="foto-vista-previa" alt="Perfil">
+                    <br>
+                    <label for="selector-foto" class="btn-subir-foto">📸 Cambiar Foto de Perfil</label>
+                    <input type="file" id="selector-foto" accept="image/*" style="display: none;">
+                </div>
+
+                <input type="text" id="login-usuario" class="campo-texto" placeholder="Nombre de usuario" required>
+                <input type="password" id="login-contrasena" class="campo-texto" placeholder="Contraseña" required>
+                <button type="submit" class="btn-entrar">Ingresar a la Plataforma</button>
+            </form>
+        </div>
+
+        <div class="contenedor-chat" id="seccion-chat" style="display: none;">
+            <div class="cabecera-chat">
+                <div style="display: flex; align-items: center;">
+                    <img src="" id="foto-chat-perfil" alt="Avatar">
+                    <h3>🤖 Asistente de Código Estructurado</h3>
+                </div>
+                <span id="etiqueta-nivel" style="font-size: 12px; background: #ff5722; padding: 3px 8px; border-radius: 10px;">Nivel: No seleccionado</span>
+            </div>
+            <div class="cuerpo-chat" id="pantalla-mensajes"></div>
+            <div class="pie-chat">
+                <input type="text" id="entrada-usuario" placeholder="Pide tu código estructurado aquí..." />
+                <button id="btn-enviar-chat">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let nivelActual = "No seleccionado";
+        let chatActualId = null;
+        
+        // Cargar historial y FOTO de perfil desde la memoria permanente del navegador (localStorage)
+        let historialChats = JSON.parse(localStorage.getItem('historial_ia')) || [];
+        let imagenBase64 = localStorage.getItem('foto_perfil_usuario') || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+
+        const selectorFoto = document.getElementById('selector-foto');
+        const fotoVistaPrevia = document.getElementById('foto-vista-previa');
+        const fotoChatPerfil = document.getElementById('foto-chat-perfil');
+
+        // Pintamos la foto guardada al cargar la página
+        fotoVistaPrevia.src = imagenBase64;
+
+        // FUNCIÓN MEJORADA: Escucha cuando seleccionas una foto nueva y la guarda al instante
+        selectorFoto.addEventListener('change', function(event) {
+            const archivo = event.target.files[0];
+            if (archivo) {
+                const leerArchivo = new FileReader();
+                leerArchivo.onload = function(e) {
+                    imagenBase64 = e.target.result;
+                    fotoVistaPrevia.src = imagenBase64;
+                    fotoChatPerfil.src = imagenBase64;
+                    // Guardado permanente de la foto
+                    localStorage.setItem('foto_perfil_usuario', imagenBase64);
+                }
+                leerArchivo.readAsDataURL(archivo);
+            }
+        });
+
+        // --- AUTENTICACIÓN ---
+        const formUsuario = document.getElementById('form-usuario');
+        const seccionLogin = document.getElementById('seccion-login');
+        const seccionChat = document.getElementById('seccion-chat');
+
+        formUsuario.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const txtUsuario = document.getElementById('login-usuario').value.trim();
+            const txtContrasena = document.getElementById('login-contrasena').value;
+
+            const respuesta = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ usuario: txtUsuario, contrasena: txtContrasena })
+            });
+            const resultado = await respuesta.json();
+            if (resultado.status === "ok") {
+                seccionLogin.style.display = 'none';
+                seccionChat.style.display = 'flex';
+                fotoChatPerfil.src = imagenBase64; // Inyecta la foto permanente al chat
+                inicializarPlataforma();
+            } else {
+                alert(resultado.mensaje);
+            }
+        });
+
+        // --- BOTONES DE NIVEL ---
+        const botonesNivel = document.querySelectorAll('.btn-nivel');
+        const etiquetaNivel = document.getElementById('etiqueta-nivel');
+
+        botonesNivel.forEach(boton => {
+            boton.addEventListener('click', function() {
+                botonesNivel.forEach(b => b.classList.remove('activo'));
+                this.classList.add('activo');
+                nivelActual = this.innerText;
+                etiquetaNivel.innerText = "Nivel: " + nivelActual;
+            });
+        });
+
+        // --- MANEJO DE CHATS E HISTORIAL ---
+        const pantallaMensajes = document.getElementById('pantalla-mensajes');
+        const entradaUsuario = document.getElementById('entrada-usuario');
+        const btnEnviarChat = document.getElementById('btn-enviar-chat');
+        const listaHistorial = document.getElementById('lista-historial');
+        const btnNuevoChat = document.getElementById('btn-nuevo-chat');
+
+        function inicializarPlataforma() {
+            renderizarHistorial();
+            if (historialChats.length > 0) {
+                cargarChat(historialChats[0].id);
+            } else {
+                crearNuevoChat();
+            }
+        }
+
+        function crearNuevoChat() {
+            chatActualId = 'chat_' + Date.now();
+            const nuevoChat = {
+                id: chatActualId,
+                titulo: "Nueva consulta...",
+                nivel: nivelActual,
+                mensajes: [{ rol: 'asistente', contenido: "¡Conexión exitosa! Elige tu nivel académico a la izquierda y pídeme el desarrollo que necesites.", esCodigo: false }],
+                fijado: false,
+                fecha: Date.now()
+            };
+            historialChats.push(nuevoChat);
+            guardarEnStorage();
+            renderizarHistorial();
+            mostrarMensajesEnPantalla(nuevoChat.mensajes);
+        }
+
+        btnNuevoChat.addEventListener('click', crearNuevoChat);
+
+        function guardarEnStorage() {
+            localStorage.setItem('historial_ia', JSON.stringify(historialChats));
+        }
+
+        function renderizarHistorial() {
+            listaHistorial.innerHTML = "";
+            const chatsOrdenados = [...historialChats].sort((a, b) => {
+                if (a.fijado && !b.fijado) return -1;
+                if (!a.fijado && b.fijado) return 1;
+                return b.fecha - a.fecha;
+            });
+
+            chatsOrdenados.forEach(chat => {
+                const item = document.createElement('div');
+                item.className = `item-chat ${chat.fijado ? 'fijado' : ''}`;
+                item.onclick = (e) => {
+                    if(e.target.tagName !== 'BUTTON') cargarChat(chat.id);
+                };
+
+                const textoTitulo = document.createElement('span');
+                textoTitulo.innerText = chat.titulo.length > 20 ? chat.titulo.substring(0, 20) + '...' : chat.titulo;
+                item.appendChild(textoTitulo);
+
+                const btnFijar = document.createElement('button');
+                btnFijar.className = 'btn-fijar';
+                btnFijar.innerHTML = '📌';
+                btnFijar.onclick = (e) => {
+                    e.stopPropagation();
+                    alternarFijarChat(chat.id);
+                };
+                item.appendChild(btnFijar);
+
+                listaHistorial.appendChild(item);
+            });
+        }
+
+        function alternarFijarChat(id) {
+            const chat = historialChats.find(c => c.id === id);
+            if (chat) {
+                chat.fijado = !chat.fijado;
+                guardarEnStorage();
+                renderizarHistorial();
+            }
+        }
+
+        function cargarChat(id) {
+            chatActualId = id;
+            const chat = historialChats.find(c => c.id === id);
+            if (chat) {
+                chat.fecha = Date.now();
+                guardarEnStorage();
+                mostrarMensajesEnPantalla(chat.mensajes);
+                
+                if (chat.nivel !== "No seleccionado") {
+                    nivelActual = chat.nivel;
+                    etiquetaNivel.innerText = "Nivel: " + nivelActual;
+                    botonesNivel.forEach(b => {
+                        if(b.innerText === nivelActual) b.classList.add('activo');
+                        else b.classList.remove('activo');
+                    });
+                }
+            }
+        }
+
+        function mostrarMensajesEnPantalla(mensajes) {
+            pantallaMensajes.innerHTML = "";
+            mensajes.forEach(msg => {
+                const divMsg = document.createElement('div');
+                divMsg.className = `mensaje ${msg.rol}`;
+                
+                if (msg.esCodigo) {
+                    const pre = document.createElement('pre');
+                    pre.className = 'bloque-codigo';
+                    pre.innerText = msg.contenido;
+                    divMsg.appendChild(pre);
+
+                    const btnCopiar = document.createElement('button');
+                    btnCopiar.className = 'btn-copiar';
+                    btnCopiar.innerText = '📋 Copiar Código Estructurado';
+                    btnCopiar.onclick = () => {
+                        navigator.clipboard.writeText(msg.contenido);
+                        btnCopiar.innerText = '✅ ¡Copiado!';
+                        setTimeout(() => btnCopiar.innerText = '📋 Copiar Código Estructurado', 2000);
+                    };
+                    divMsg.appendChild(btnCopiar);
+                } else {
+                    divMsg.innerText = msg.contenido;
+                }
+                pantallaMensajes.appendChild(divMsg);
+            });
+            pantallaMensajes.scrollTop = pantallaMensajes.scrollHeight;
+        }
+
+        // --- ENVIAR MENSAJE ---
+        async function enviarMensaje() {
+            const texto = entradaUsuario.value.trim();
+            if (texto === "") return;
+            if (nivelActual === "No seleccionado") {
+                alert("Por favor, selecciona un nivel a la izquierda antes de consultar.");
+                return;
+            }
+
+            const chatObj = historialChats.find(c => c.id === chatActualId);
+            if(chatObj && chatObj.titulo === "Nueva consulta...") {
+                chatObj.titulo = texto;
+            }
+
+            chatObj.mensajes.push({ rol: 'usuario', contenido: texto, esCodigo: false });
+            chatObj.nivel = nivelActual;
+            guardarEnStorage();
+            renderizarHistorial();
+            mostrarMensajesEnPantalla(chatObj.mensajes);
+
+            entradaUsuario.value = "";
+
+            const divIA = document.createElement('div');
+            divIA.className = 'mensaje asistente';
+            divIA.innerText = "🤖 Compilando estructura limpia...";
+            pantallaMensajes.appendChild(divIA);
+            pantallaMensajes.scrollTop = pantallaMensajes.scrollHeight;
+
+            try {
+                const respuestaServidor = await fetch('/preguntar-ia', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mensaje: texto, nivel: nivelActual })
+                });
+
+                const reader = respuestaServidor.body.getReader();
+                const decoder = new TextDecoder();
+                let textoCompletoIA = "";
+
+                divIA.innerText = "";
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    textoCompletoIA += decoder.decode(value, { stream: true });
+                }
+
+                let codigoExtraido = "";
+                if (textoCompletoIA.includes("[CODIGO]")) {
+                    codigoExtraido = textoCompletoIA.split("[CODIGO]")[1].split("[/CODIGO]")[0].trim();
+                } else {
+                    codigoExtraido = textoCompletoIA.trim();
+                }
+
+                chatObj.mensajes.pop(); 
+                chatObj.mensajes.push({ rol: 'asistente', contenido: codigoExtraido, esCodigo: true });
+                guardarEnStorage();
+                mostrarMensajesEnPantalla(chatObj.mensajes);
+
+            } catch (error) {
+                divIA.innerText = "❌ Ocurrió un error en la conexión.";
+            }
+        }
+
+        btnEnviarChat.addEventListener('click', enviarMensaje);
+        entradaUsuario.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') enviarMensaje();
+        });
+    </script>
+</body>
+</html>

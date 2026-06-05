@@ -1,0 +1,244 @@
+/* ==========================================================================
+   ESTILOS GENERALES Y MAQUETACIÓN
+   ========================================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    background-color: #f4f6f9;
+}
+
+/* ==========================================================================
+   COLUMNA IZQUIERDA: Niveles e Instrucciones
+   ========================================================================== */
+.columna-izquierda {
+    width: 30%;
+    background-color: #1e1e2f;
+    color: white;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.instrucciones h2 {
+    margin-bottom: 15px;
+    color: #4fc3f7;
+}
+
+.instrucciones p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.btn-nivel {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a3f58;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-nivel.activo {
+    background-color: #4fc3f7;
+    color: #1e1e2f;
+    box-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+}
+
+.btn-nivel:hover {
+    background-color: #4fc3f7;
+    color: #1e1e2f;
+}
+
+.btn-contacto {
+    background-color: #ff5722;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+.btn-contacto:hover {
+    background-color: #25d366;
+}
+
+/* ==========================================================================
+   COLUMNA DERECHA: Login y Chat interactivo
+   ========================================================================== */
+.columna-derecha {
+    width: 70%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Caja de login */
+.caja-bienvenida {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.contenedor-perfil {
+    margin-bottom: 20px;
+}
+
+#foto-vista-previa {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #4fc3f7;
+    margin-bottom: 10px;
+}
+
+.btn-subir-foto {
+    display: inline-block;
+    font-size: 13px;
+    color: #4fc3f7;
+    background: #1e1e2f;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.campo-texto {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.btn-entrar {
+    width: 100%;
+    background-color: #4fc3f7;
+    color: #1e1e2f;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+/* Interfaz del chat */
+.contenedor-chat {
+    width: 100%;
+    max-width: 700px;
+    height: 85vh;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.cabecera-chat {
+    background: #1e1e2f;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info-asistente {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#foto-chat-perfil {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #4fc3f7;
+}
+
+.cuerpo-chat {
+    flex: 1;
+    padding: 20px;
+    background: #f8f9fa;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.mensaje {
+    padding: 12px 16px;
+    border-radius: 8px;
+    max-width: 80%;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.mensaje.asistente {
+    background: #e3f2fd;
+    color: #0d47a1;
+    align-self: flex-start;
+}
+
+.mensaje.usuario {
+    background: #4fc3f7;
+    color: #1e1e2f;
+    align-self: flex-end;
+    font-weight: 500;
+}
+
+.pie-chat {
+    display: flex;
+    padding: 15px;
+    background: white;
+    border-top: 1px solid #eee;
+    gap: 10px;
+}
+
+#entrada-usuario {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+#btn-enviar-chat {
+    background: #1e1e2f;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
