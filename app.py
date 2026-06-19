@@ -12,8 +12,10 @@ API_KEY = 'AQ.Ab8RN6L1ENU-qk485PaDiNXjVBfCo_1m0cD5N-U0-pxaIu_ug'
 cliente_ia = genai.Client(api_key="AQ.Ab8RN6L1ENU-qk485PaDiNXjVBfCo_1m0cD5N-U0-pxaIu_ug")
 
 def conectar_db():
-    """Tu función de conexión original"""
-    conexion = sqlite3.connect('usuarios.db')
+    """Conexión limpia que asegura la creación física del archivo usuarios.db en Render"""
+    ruta_base = os.path.dirname(os.path.abspath(__file__))
+    ruta_db = os.path.join(ruta_base, 'usuarios.db')
+    conexion = sqlite3.connect(ruta_db)
     conexion.row_factory = sqlite3.Row
     return conexion
 
@@ -39,7 +41,7 @@ def inicializar_base_datos():
         conexion.commit()
     conexion.close()
 
-# Inicializa de forma segura al arrancar
+# Inicializa de forma segura la base de datos al arrancar la app
 inicializar_base_datos()
 
 
@@ -65,7 +67,6 @@ def login():
         if cuenta:
             session['usuario'] = cuenta['usuario']
             session['rol'] = cuenta['rol']
-            # Aquí puedes cambiarlo a la redirección de tu chat cuando esté listo
             return f"¡Inicio de sesión exitoso! Bienvenido {session['usuario']} ({session['rol']})."
         else:
             return "Usuario o contraseña incorrectos. Intenta de nuevo."
