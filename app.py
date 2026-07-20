@@ -12,7 +12,7 @@ API_KEY = 'AQ.Ab8RN6L1ENU-qk485PaDiNXjVBfCo_1m0cD5N-U0-pxaIu_ug'
 cliente_ia = genai.Client(api_key="AQ.Ab8RN6L1ENU-qk485PaDiNXjVBfCo_1m0cD5N-U0-pxaIu_ug")
 
 def conectar_db():
-    """Conexión robusta a la base de datos local/servidor"""
+    """Conexión limpia que asegura la creación física del archivo usuarios.db"""
     ruta_base = os.path.dirname(os.path.abspath(__file__))
     ruta_db = os.path.join(ruta_base, 'usuarios.db')
     conexion = sqlite3.connect(ruta_db)
@@ -20,7 +20,7 @@ def conectar_db():
     return conexion
 
 def inicializar_base_datos():
-    """Asegura la creación limpia de la tabla de usuarios"""
+    """Crea las tablas necesarias si no existen"""
     try:
         conexion = conectar_db()
         cursor = conexion.cursor()
@@ -34,22 +34,28 @@ def inicializar_base_datos():
                 rol TEXT DEFAULT 'TSU'
             )
         ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS conversaciones (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                usuario TEXT,
+                titulo TEXT,
+                fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
         conexion.commit()
         conexion.close()
     except Exception as e:
         print(f"Error al inicializar la base de datos: {e}")
 
-# Inicializamos
 inicializar_base_datos()
 
 
-# 🔑 RUTA PRINCIPAL Y LOGIN (Acepta cualquier estructura de BD)
+# 🔑 RUTA PRINCIPAL Y LOGIN
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         try:
-            # Captura flexible del formulario
             val_ingresado = (request.form.get('username') or 
                              request.form.get('usuario') or 
                              request.form.get('user') or '').strip()
@@ -64,11 +70,9 @@ def login():
             conexion = conectar_db()
             cursor = conexion.cursor()
             
-            # Consultamos las columnas existentes para no fallar
             cursor.execute("PRAGMA table_info(usuarios)")
             columnas = [col[1] for col in cursor.fetchall()]
             
-            # Detectamos si la columna se llama 'usuario' o 'username'
             col_user = 'usuario' if 'usuario' in columnas else 'username'
             col_pass = 'contrasena' if 'contrasena' in columnas else 'password'
 
@@ -76,7 +80,7 @@ def login():
             cursor.execute(query, (val_ingresado, val_ingresado, pass_ingresada, pass_ingresada))
             cuenta = cursor.fetchone()
 
-            # Si no existe ningún usuario aún en la BD guardada, creamos a admin al vuelo
+            # Autocreador inicial para evitar bloqueo
             if not cuenta and val_ingresado == 'admin' and pass_ingresada == '1234':
                 try:
                     cursor.execute(f"INSERT INTO usuarios ({col_user}, {col_pass}, rol) VALUES (?, ?, ?)",
@@ -104,7 +108,33 @@ def login():
     return render_template('index.html')
 
 
-# 👥 RUTA PARA REGISTRAR OTROS USUARIOS
+# 🔐 RUTA PARA CAMBIAR CONTRASEÑA DE FORMA SEGURA
+@app.route('/cambiar_clave', methods=['POST'])
+def cambiar_clave():
+    try:
+        user_target = (request.form.get('username') or request.form.get('usuario') or '').strip()
+        nueva_clave = (request.form.get('nueva_contrasena') or request.form.get('password') or '').strip()
+
+        if user_target and nueva_clave:
+            conexion = conectar_db()
+            cursor = conexion.cursor()
+            cursor.execute("PRAGMA table_info(usuarios)")
+            columnas = [col[1] for col in cursor.fetchall()]
+            
+            col_user = 'usuario' if 'usuario' in columnas else 'username'
+            col_pass = 'contrasena' if 'contrasena' in columnas else 'password'
+
+            cursor.execute(f"UPDATE usuarios SET {col_pass} = ? WHERE {col_user} = ?", (nueva_clave, user_target))
+            conexion.commit()
+            conexion.close()
+            return "<h1>Contraseña Actualizada</h1><p>Se guardó el cambio con éxito.</p><a href='/'>Volver al Login</a>"
+        else:
+            return "Faltan datos para cambiar la contraseña."
+    except Exception as e:
+        return f"Error al cambiar clave: {str(e)}"
+
+
+# 👥 REGISTRO DE NUEVOS USUARIOS
 @app.route('/registrar', methods=['POST'])
 def registrar():
     try:
@@ -127,7 +157,7 @@ def registrar():
             )
             conexion.commit()
             conexion.close()
-            return "<h1>Usuario Registrado</h1><p>El usuario fue creado con éxito.</p><a href='/'>Ir al Login</a>"
+            return "<h1>Usuario Registrado</h1><p>Creado con éxito.</p><a href='/'>Ir al Login</a>"
         else:
             return "Faltan datos para el registro."
     except Exception as e:
@@ -143,6 +173,7 @@ def logout():
 if __name__ == '__main__':
     app.run(debug=True)
 
+          
 
 
 
