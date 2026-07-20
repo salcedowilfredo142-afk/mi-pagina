@@ -3,79 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Código IA - Profesional</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <title>Plataforma de Código IA</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { display: flex; height: 100vh; background-color: #f0f4f8; }
+        
+        /* Panel Lateral */
+        .sidebar { width: 280px; background-color: #1a2332; color: #fff; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+        .sidebar h2 { font-size: 18px; margin-bottom: 15px; color: #38bdf8; }
+        
+        /* Niveles Brillantes */
+        .nivel-container { display: flex; gap: 8px; margin-bottom: 20px; }
+        .btn-nivel { flex: 1; padding: 8px 4px; background: #26334d; color: #94a3b8; border: 1px solid #334155; border-radius: 6px; cursor: pointer; text-align: center; font-size: 12px; font-weight: bold; transition: all 0.3s; }
+        .btn-nivel.active { background: #0284c7; color: #fff; border-color: #38bdf8; box-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
+        
+        .btn-new-chat { width: 100%; padding: 10px; background: #38bdf8; color: #0f172a; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 20px; }
+        
+        /* Historial de Chats */
+        .chats-header { font-size: 12px; color: #38bdf8; text-transform: uppercase; margin-bottom: 10px; font-weight: bold; }
+        .chat-list { list-style: none; flex-grow: 1; overflow-y: auto; }
+        .chat-item { padding: 8px 12px; background: #26334d; border-radius: 4px; margin-bottom: 6px; font-size: 13px; cursor: pointer; color: #cbd5e1; transition: background 0.2s; }
+        .chat-item:hover { background: #334155; color: #fff; }
+
+        /* Botón WhatsApp */
+        .btn-codigo { width: 100%; padding: 12px; background: #f97316; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; display: block; }
+        .btn-codigo:hover { background: #ea580c; }
+
+        /* Contenido Principal / Formulario Login */
+        .main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .login-card { background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 400px; text-align: center; }
+        
+        /* Avatar / Foto Perfil */
+        .avatar-box { width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 15px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; }
+        .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
+        .btn-foto { background: #334155; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; margin-bottom: 20px; }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group input { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; background: #f8fafc; }
+        .btn-submit { width: 100%; padding: 12px; background: #38bdf8; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    </style>
 </head>
 <body>
 
-    <div id="splash-screen">
-        <div class="splash-content">
-            <div class="spinner"></div>
-            <h2>Plataforma IA</h2>
-            <p>Cargando entorno corporativo...</p>
+    <div class="sidebar">
+        <div>
+            <h2>Nivel Académico</h2>
+            <div class="nivel-container">
+                <button class="btn-nivel" onclick="seleccionarNivel(this)">Veterano</button>
+                <button class="btn-nivel active" onclick="seleccionarNivel(this)">TSU</button>
+                <button class="btn-nivel" onclick="seleccionarNivel(this)">Ingeniero</button>
+            </div>
+
+            <button class="btn-new-chat">+ Iniciar Nuevo Chat</button>
+
+            <div class="chats-header">📌 Conversaciones Fijas y Recientes</div>
+            <ul class="chat-list">
+                <li class="chat-item">💬 Proyecto de Soporte Técnico</li>
+                <li class="chat-item">💬 Guía de Funciones Flask</li>
+            </ul>
+        </div>
+
+        <a href="https://wa.me/584120000000?text=Hola,%20quisiera%20solicitar%20un%20código%20personalizado" target="_blank" class="btn-codigo">
+            📣 Solicitar Código Personalizado
+        </a>
+    </div>
+
+    <div class="main-content">
+        <div class="login-card">
+            <h2>🔑 Iniciar Sesión</h2>
+            <p style="color: #64748b; font-size: 13px; margin-bottom: 20px;">Gestiona tu perfil y accede al motor IA</p>
+            
+            <div class="avatar-box">
+                <img id="avatar-preview" src="https://via.placeholder.com/90" alt="Foto">
+            </div>
+            <input type="file" id="foto-input" style="display: none;" accept="image/*" onchange="cargarFoto(event)">
+            <button class="btn-foto" onclick="document.getElementById('foto-input').click()">📷 Cambiar Foto de Perfil</button>
+
+            <form action="/login" method="POST">
+                <div class="input-group">
+                    <input type="text" name="username" placeholder="Nombre de usuario" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" placeholder="Contraseña" required>
+                </div>
+                <button type="submit" class="btn-submit">Ingresar a la Plataforma</button>
+            </form>
         </div>
     </div>
 
-    <div class="app-container">
-        
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>Nivel Académico</h2>
-                <div class="academic-levels">
-                    <button class="btn-level">Veterano</button>
-                    <button class="btn-level">TSU</button>
-                    <button class="btn-level">Ingeniero</button>
-                </div>
-            </div>
-            
-            <button class="btn-new-chat">➕ Iniciar Nuevo Chat</button>
-            
-            <div class="sidebar-menu">
-                <p class="menu-title">📌 CONVERSACIONES FIJAS Y RECIENTES</p>
-            </div>
-            
-            <button class="btn-custom-code">💬 Solicitar Código Personalizado</button>
-        </aside>
-
-        <main class="main-content">
-            <div class="login-card">
-                <div class="login-header">
-                    <span class="key-icon">🔑</span>
-                    <h1>Iniciar Sesión</h1>
-                    <p>Gestiona tu perfil y accede al motor IA</p>
-                </div>
-                
-                <div class="profile-avatar-section">
-                    <div class="avatar-placeholder">
-                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Avatar">
-                    </div>
-                    <button class="btn-change-photo">📷 Cambiar Foto de Perfil</button>
-                </div>
-
-                <form action="/login" method="POST" class="login-form">
-                    <div class="form-group">
-                        <input type="text" name="username" placeholder="Nombre de usuario" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" name="password" placeholder="Contraseña" required>
-                    </div>
-                    <button type="submit" class="btn-submit">Ingresar a la Plataforma</button>
-                </form>
-            </div>
-        </main>
-
-    </div>
-
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            setTimeout(function() {
-                const splash = document.getElementById("splash-screen");
-                splash.style.opacity = "0";
-                setTimeout(function() {
-                    splash.style.display = "none";
-                }, 500);
-            }, 2500);
-        });
+        // Función para cambiar brillo/selección de niveles
+        function seleccionarNivel(btn) {
+            document.querySelectorAll('.btn-nivel').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        // Función para cambiar preview de la foto de perfil
+        function cargarFoto(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const preview = document.getElementById('avatar-preview');
+                preview.src = reader.result;
+            }
+            if(event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
     </script>
 </body>
 </html>
