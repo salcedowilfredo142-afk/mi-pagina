@@ -20,7 +20,7 @@ def conectar_db():
     return conexion
 
 def inicializar_base_datos():
-    """Garantiza que la tabla exista para registrar a tus compañeros"""
+    """Garantiza que la tabla exista para registrar usuarios"""
     conexion = conectar_db()
     cursor = conexion.cursor()
     cursor.execute('''
@@ -31,7 +31,6 @@ def inicializar_base_datos():
             rol TEXT DEFAULT 'TSU'
         )
     ''')
-    # Crear un administrador inicial para pruebas si la DB está vacía
     cursor.execute("SELECT COUNT(*) FROM usuarios")
     if cursor.fetchone()[0] == 0:
         cursor.execute(
@@ -41,18 +40,18 @@ def inicializar_base_datos():
         conexion.commit()
     conexion.close()
 
-# Inicializa de forma segura la base de datos al arrancar la app
+# Inicializamos la base de datos
 inicializar_base_datos()
 
 
-# 🔑 RUTA DE LOGIN (Evita el error 415 de tipo de medio)
+# 🔑 RUTA PRINCIPAL Y DE LOGIN (Soporta GET y POST de forma directa)
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # Leemos los datos tradicionales enviados por el formulario HTML
-        usuario_ingresado = request.form.get('username')
-        contrasena_ingresada = request.form.get('password')
+        # Recibir los datos del formulario HTML
+        usuario_ingresado = request.form.get('username') or request.form.get('usuario')
+        contrasena_ingresada = request.form.get('password') or request.form.get('contrasena')
         
         if not usuario_ingresado or not contrasena_ingresada:
             return "Por favor, rellena todos los campos."
@@ -74,11 +73,11 @@ def login():
     return render_template('index.html')
 
 
-# 👥 RUTA PARA GUARDAR OTROS USUARIOS (Tus compañeros)
+# 👥 RUTA PARA GUARDAR OTROS USUARIOS
 @app.route('/registrar', methods=['POST'])
 def registrar():
-    nuevo_usuario = request.form.get('username')
-    nueva_contrasena = request.form.get('password')
+    nuevo_usuario = request.form.get('username') or request.form.get('usuario')
+    nueva_contrasena = request.form.get('password') or request.form.get('contrasena')
     rol_asignado = request.form.get('rol', 'TSU')
     
     if nuevo_usuario and nueva_contrasena:
